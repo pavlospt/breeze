@@ -21,7 +21,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -93,7 +93,7 @@ jobs:
             echo "Developer ID code signing is enabled."
           else
             echo "sign_enabled=false" >> "${GITHUB_OUTPUT}"
-            echo "::warning::Missing code-signing secrets. Release will be ad-hoc signed and blocked by Gatekeeper on first launch."
+            echo "::notice::No code-signing secrets set; release will be ad-hoc signed (Gatekeeper prompts on first launch)."
           fi
 
           if [[ -n "${NOTARIZE_APPLE_ID}" && -n "${NOTARIZE_TEAM_ID}" && -n "${NOTARIZE_APP_PASSWORD}" ]]; then
@@ -101,7 +101,7 @@ jobs:
             echo "Notarization is enabled."
           else
             echo "notarize_enabled=false" >> "${GITHUB_OUTPUT}"
-            echo "::warning::Missing notarization secrets. Release will not be notarized."
+            echo "Notarization is disabled (no notarization secrets set)."
           fi
 
       - name: Import Developer ID certificate
@@ -187,7 +187,7 @@ jobs:
           cat "${SHA_PATH}"
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: v${{ steps.package.outputs.version }}
           name: Breeze ${{ steps.package.outputs.version }}
